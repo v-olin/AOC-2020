@@ -5,7 +5,7 @@ using System.Linq;
 string mapTemplate = "map.txt";
 string[] rows = File.ReadAllLines(mapTemplate);
 var treesTraversed = new List<Int64>();
-var slopes = new List<(int r, int d)>(){
+var slopes = new List<(int, int)>(){
     (1,1),
     (3,1),
     (5,1),
@@ -14,8 +14,7 @@ var slopes = new List<(int r, int d)>(){
 };
 
 foreach ((int r, int d) in slopes){
-    int j = 0;
-    int n = 0;
+    int j = 0, n = 0;
     for (int i = 0; i < rows.Length; i = i + d){
         if (rows[i][j] == '#')
             n++;

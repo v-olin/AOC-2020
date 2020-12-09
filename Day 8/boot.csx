@@ -1,71 +1,79 @@
 using System;
 using System.IO;
-using System.Linq;
 
-string bootSequence = "ops.txt";
-string[] boot = File.ReadAllLines(bootSequence);
-var (res, flag) = CheckSequence(boot);
-int instructionFlipped = -1;
+string[] bootsequence = File.ReadAllLines("ops.txt");
+int ansP1 = Part1(bootsequence);
+int ansP2 = Part2(bootsequence);
+Console.WriteLine($"Part 1: {ansP1}\tPart 2: {ansP2}");
 
-for (int i = boot.Length - 1; i >= 0; i--){
-    if (flag == 'T'){
-        Console.WriteLine($"Accumulated: {res}");
-        break;
-    }
-    if (instructionFlipped != -1){
-        FlipOP(instructionFlipped);
-    }
-    if (boot[i].Split(' ')[0] != "acc"){
-        instructionFlipped = i;
-        FlipOP(i);
-        (res, flag) = CheckSequence(boot);
-    }
-}
-
-void FlipOP(int i){
-    switch (boot[i].Split(' ')[0]){
-        case "nop":
-            boot[i] = "jmp " + boot[i].Split(' ')[1];
-            break;
-        case "jmp":
-            boot[i] = "nop " + boot[i].Split(' ')[1];
-            break;
-        default:
-            throw new Exception("Haha loser you suck");
-    }
-}
-
-(int res, char flag) CheckSequence(string[] s){
-    int accumulator = 0;
+int Part1(string[] s){
     int index = 0;
-    var executedInstructions = new List<int>();
+    int accumulator = 0;
+    var commands = new HashSet<int>();
 
-    try{
-        while(!executedInstructions.Contains(index) && index != s.Length){
-            executedInstructions.Add(index);
-            string[] instruction = boot[index].Split(' ');
-            switch(instruction[0]){
-                case "nop":
-                    index++;
-                    break;
-                case "acc":
-                    accumulator += int.Parse(instruction[1]);
-                    index++;
-                    break;
-                case "jmp":
-                    index += int.Parse(instruction[1]);
-                    break;
-                default:
-                    throw new Exception($"Unknown instruction: {boot[index]}");
-            }
+    while (commands.Add(index)){
+        string[] t = s[index].Split(' ');
+        string instruction = t[0];
+        int arg = int.Parse(t[1]);
+
+        if (instruction == "nop"){
+            index++;
+        }
+        else if (instruction == "acc"){
+            accumulator += arg;
+            index++;
+        }
+        else if (instruction == "jmp"){
+            index += arg;
         }
     }
-    catch(Exception){ }    
 
-    if (index == s.Length){
-        return (accumulator, 'T');
+    return accumulator;
+}
+
+int Part2(string[] s){
+    int index = 0;
+    int accumulator = 0;
+    bool instructionSwapped = false;
+    var cmds = new HashSet<int>();
+    var nops = new HashSet<int>();
+    var jmps = new HashSet<int>();
+
+    while (true){
+        string[] t = s[index].Split(' ');
+        string instruction = t[0];
+        int arg = int.Parse(t[1]);
+
+        if (!instructionSwapped && instruction == "nop" && nops.Add(index)){
+            instructionSwapped = true;
+            instruction = "jmp";
+        }
+        else if (!instructionSwapped && instruction == "jmp" && jmps.Add(index)){
+            instructionSwapped = true;
+            instruction = "nop";
+        }
+
+        if (instruction == "nop"){
+            index++;
+        }
+        else if (instruction == "acc"){
+            accumulator += arg;
+            index++;
+        }
+        else if (instruction == "jmp"){
+            index += arg;
+        }
+
+        if (index == s.Length){
+            break;
+        }
+        else if (!cmds.Add(index)){
+            index = 0;
+            accumulator = 0;
+            instructionSwapped = false;
+            cmds.Clear();
+        }
     }
-    else {
-        return (executedInstructions.Last(), 'F');
-    }
+    
+    return accumulator;
 }

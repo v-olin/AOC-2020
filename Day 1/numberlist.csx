@@ -3,6 +3,8 @@ using System.Linq;
 using System.IO;
 
 string file = "1input.txt";
+
+// Borde göra list-comprehension och sortera ut med linq istället för brute-force
 int[] nums = Array.ConvertAll(File.ReadAllLines(file), s => int.Parse(s));
 for (int i = 0; i < (nums.Length - 2); i++){
     for (int j = i+1; j < (nums.Length - 1); j++){

@@ -17,5 +17,4 @@ for(int i = 0; i < adapters.Count() - 1; i++){
         diffs.Add(diff, 1);        
 }
 
-int prod = diffs[1] * diffs[3];
-Console.WriteLine($"Part 1: {prod}");
+Console.WriteLine($"Part 1: {diffs[1] * diffs[3]}");

@@ -14,7 +14,7 @@ for(int i = 0; i < adapters.Count() - 1; i++){
     if (diffs.ContainsKey(diff))
         diffs[diff]++;
     else
-        diffs.Add(diff, 1);        
+        diffs.Add(diff, 1);
 }
 
 Console.WriteLine($"Part 1: {diffs[1] * diffs[3]}");

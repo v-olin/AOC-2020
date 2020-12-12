@@ -14,7 +14,6 @@ Console.WriteLine($"Part 2: {Math.Abs(wp[3]) + Math.Abs(wp[4])}");
 
 int[] ApplyInstruction(string s, int f, int[] pos){
     int x = pos[0], y = pos[1], v = pos[2];
-    char d = s.First();
     int val = int.Parse(new string(s.Skip(1).ToArray()));
     switch(s.First()){
         case 'N':

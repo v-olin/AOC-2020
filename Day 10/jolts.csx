@@ -22,8 +22,10 @@ Console.WriteLine($"Part 1: {diffs[1] * diffs[3]}");
 adapters.Reverse();
 diffs.Clear();
 foreach (long jolt in adapters){
-    var next = adapters.Where(j => j > jolt && j <= jolt + 3);
-    diffs[jolt] = next.Select(n => diffs[n]).Sum();
+    diffs[jolt] = adapters
+        .Where(j => j > jolt && j <= jolt + 3)
+        .Select(n => diffs[n])
+        .Sum();
     if (diffs[jolt] == 0)
         diffs[jolt] = 1;
 }

@@ -16,34 +16,44 @@ int[] ApplyInstruction(string s, int f, int[] pos){
     int x = pos[0], y = pos[1], v = pos[2];
     char d = s.First();
     int val = int.Parse(new string(s.Skip(1).ToArray()));
-    if (d == 'N')       y += val;
-    else if (d == 'S')  y -= val;
-    else if (d == 'E')  x += val;
-    else if (d == 'W')  x -= val;
-    else if (d == 'L'){
-        if (f == 1) v = (v + val) % 360;
-        else{
-            if (val == 90) { x = pos[1]*-1; y = pos[0]; }
-            else if (val == 180) { x = pos[0]*-1; y = pos[1]*-1; }
-            else if (val == 270) { x = pos[1]; y = pos[0]*-1; }
-        }
-    }
-    else if (d == 'R'){
-        if (f == 1) v = (v + (360 - val)) % 360;
-        else{
-            if (val == 90) { x = pos[1]; y = pos[0]*-1; }
-            else if (val == 180) { x = pos[0]*-1; y = pos[1]*-1; }
-            else if (val == 270) { x = pos[1]*-1; y = pos[0]; }
-        }
-    }
-    else{
-        if (f == 1){
-            if (v == 0)         x += val;
-            else if (v == 90)   y += val;
-            else if (v == 180)  x -= val;
-            else                y -= val;
-        }
-        else { pos[3] += x * val; pos[4] += y * val; }
+    switch(s.First()){
+        case 'N':
+            y += val;
+            break;
+        case 'S':
+            y -= val;
+            break;
+        case 'E':
+            x += val;
+            break;
+        case 'W':
+            x -= val;
+            break;
+        case 'L':
+            if (f == 1) v = (v + val) % 360;
+            else{
+                if (val == 90) { x = pos[1]*-1; y = pos[0]; }
+                else if (val == 180) { x = pos[0]*-1; y = pos[1]*-1; }
+                else if (val == 270) { x = pos[1]; y = pos[0]*-1; }
+            }
+            break;
+        case 'R':
+            if (f == 1) v = (v + (360 - val)) % 360;
+            else{
+                if (val == 90) { x = pos[1]; y = pos[0]*-1; }
+                else if (val == 180) { x = pos[0]*-1; y = pos[1]*-1; }
+                else if (val == 270) { x = pos[1]*-1; y = pos[0]; }
+            }
+            break;
+        default:
+            if (f == 1){
+                if (v == 0)         x += val;
+                else if (v == 90)   y += val;
+                else if (v == 180)  x -= val;
+                else                y -= val;
+            }
+            else { pos[3] += x * val; pos[4] += y * val; }
+            break;
     }
     if (f == 1) return new int[] { x, y, v };
     else return new int[] { x, y, v, pos[3], pos[4] };

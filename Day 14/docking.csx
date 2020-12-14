@@ -4,37 +4,38 @@ using System.Linq;
 
 string[] instructions = File.ReadAllLines("init.txt");
 string mask = "";
-var memory = new List<Data>();
+var memoryp1 = new List<Data>();
+var memoryp2 = new List<Data>();
 
 foreach (string s in instructions){
     string[] t = s.Split(' ');
     if (t[0].Contains("mask")) mask = t[2];
-    else{
-        t = s.Split(new char[] { '[', ']', ' ' });
-        WriteToMemory(ref memory, t[1], t[4], mask);
-    }
-}
-
-long ans = memory.Select(d => long.Parse(d.Value)).Sum();
-Console.WriteLine($"Part 1: {ans}");
-
-memory.Clear();
-foreach (string s in instructions){
-    string[] t = s.Split(' ');
-    if (t[0].Contains("mask")) mask = t[2];
-    else{
+    else {
         t = s.Split(new char[] { '[', ']', ' ' });
         List<char> address = MaskAdress(ToBinaryString(t[1], 36), mask).ToCharArray().ToList();
         List<char[]> flucBits = PossibleCombinations(address.Where(c => c == 'X').Count());
         List<string> addressList = GetPossibleAdressList(address, flucBits, mask);
-        foreach (string a in addressList){
-            WriteToMemory(ref memory, a, t[4], new string('X', 36));
-        }
+        WriteToMemory(ref memoryp1, t[1], t[4], mask);
+        foreach (string a in addressList)
+            WriteToMemory(ref memoryp2, a, t[4]);
     }
 }
 
-long ansp2 = memory.Select(d => long.Parse(d.Value)).Sum();
-Console.WriteLine($"Part 2: {ansp2}");
+long ansp1 = memoryp1.Select(d => long.Parse(d.Value)).Sum();
+long ansp2 = memoryp2.Select(d => long.Parse(d.Value)).Sum();
+Console.WriteLine($"Part 1: {ansp1}\nPart 2: {ansp2}");
+
+void WriteToMemory(ref List<Data> mem, string address, string value){
+    List<Data> mad = mem.FindAll(d => d.Address == address);
+    if (mad.Count() == 0) mem.Add(new Data() {
+        Address = address,
+        Value = value
+    });
+    else {
+        int index = mem.IndexOf(mad.First());
+        mem[index].Value = value;
+    }
+}
 
 void WriteToMemory(ref List<Data> mem, string address, string val, string mask){
     char[] bwMask = mask.ToCharArray();
@@ -42,15 +43,8 @@ void WriteToMemory(ref List<Data> mem, string address, string val, string mask){
     for (int i = 0; i < value.Count(); i++){
         value[i] = bwMask[i] == 'X' ? value[i] : bwMask[i];
     }
-    List<Data> mad = mem.FindAll(d => d.Address == address);
-    if (mad.Count() == 0) mem.Add(new Data() {
-        Address = address,
-        Value = Convert.ToInt64(new string(value), 2).ToString()
-    });
-    else {
-        int index = mem.IndexOf(mad.First());
-        mem[index].Value = Convert.ToInt64(new string(value), 2).ToString();
-    }
+    string valToWrite = Convert.ToInt64(new string (value), 2).ToString();
+    WriteToMemory(ref mem, address, valToWrite);
 }
 
 string MaskAdress(string address, string mask){
@@ -63,11 +57,6 @@ string MaskAdress(string address, string mask){
     return new string(add);
 }
 
-string ToBinaryString(string s, int l){
-    var sInBinary = Convert.ToString(int.Parse(s), 2);
-    return sInBinary.Length < l ? new string('0', l - sInBinary.Length) + sInBinary : sInBinary;
-}
-
 List<string> GetPossibleAdressList(List<char> address, List<char[]> combinations, string mask){
     var newAddressList = new List<string>();
     var add = new List<char>(address);
@@ -78,7 +67,14 @@ List<string> GetPossibleAdressList(List<char> address, List<char[]> combinations
         newAddressList.Add(new string(add.ToArray()));
         add = new List<char>(address);
     }
-    return newAddressList;
+    return newAddressList
+        .Select(a => Convert.ToInt64(a , 2).ToString())
+        .ToList();
+}
+
+string ToBinaryString(string s, int l){
+    var sInBinary = Convert.ToString(int.Parse(s), 2);
+    return sInBinary.Length < l ? new string('0', l - sInBinary.Length) + sInBinary : sInBinary;
 }
 
 List<char[]> PossibleCombinations(int n){

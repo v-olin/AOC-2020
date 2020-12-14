@@ -31,29 +31,22 @@ void WriteToMemory(ref List<Data> mem, string address, string value){
         Address = address,
         Value = value
     });
-    else {
-        int index = mem.IndexOf(mad.First());
-        mem[index].Value = value;
-    }
+    else mem[mem.IndexOf(mad.First())].Value = value;
 }
 
 void WriteToMemory(ref List<Data> mem, string address, string val, string mask){
-    char[] bwMask = mask.ToCharArray();
     char[] value = ToBinaryString(val, 36).ToCharArray();
     for (int i = 0; i < value.Count(); i++){
-        value[i] = bwMask[i] == 'X' ? value[i] : bwMask[i];
+        value[i] = mask[i] == 'X' ? value[i] : mask[i];
     }
     string valToWrite = Convert.ToInt64(new string (value), 2).ToString();
     WriteToMemory(ref mem, address, valToWrite);
 }
 
 string MaskAdress(string address, string mask){
-    char[] maskbits = mask.ToCharArray();
     char[] add = address.ToCharArray();
-    for (int i = 0; i < maskbits.Length; i++){        
-        if (maskbits[i] == '1')         add[i] = '1';
-        else if (maskbits[i] == 'X')    add[i] = 'X';
-    }
+    for (int i = 0; i < mask.Length; i++)
+        add[i] = mask[i] != '0' ? mask[i] : add[i];
     return new string(add);
 }
 
@@ -74,7 +67,7 @@ List<string> GetPossibleAdressList(List<char> address, List<char[]> combinations
 
 string ToBinaryString(string s, int l){
     var sInBinary = Convert.ToString(int.Parse(s), 2);
-    return sInBinary.Length < l ? new string('0', l - sInBinary.Length) + sInBinary : sInBinary;
+    return sInBinary.Length < l ? (new string('0', l - sInBinary.Length) + sInBinary) : sInBinary;
 }
 
 List<char[]> PossibleCombinations(int n){

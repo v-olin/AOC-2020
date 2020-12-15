@@ -13,7 +13,7 @@ IEnumerable<int> GetNumbers(IEnumerable<int> initNums){
     List<int> nums = initNums.ToList();
     var numsSeen = new Dictionary<int, List<int>>();
     for (int i = 0; i < nums.Count; i++)
-        NumSeen(ref numsSeen, nums[i], i);
+        NumSeen(numsSeen, nums[i], i);
     while (true){
         int lastNum = nums.Last();
         if (numsSeen[lastNum].Count > 1){
@@ -27,11 +27,11 @@ IEnumerable<int> GetNumbers(IEnumerable<int> initNums){
             nums.Add(0);
             yield return 0;
         }
-        NumSeen(ref numsSeen, nums.Last(), nums.Count - 1);
+        NumSeen(numsSeen, nums.Last(), nums.Count - 1);
     }
 }
 
-void NumSeen(ref Dictionary<int, List<int>> d, int n, int i){
+void NumSeen(Dictionary<int, List<int>> d, int n, int i){
     if (d.ContainsKey(n)) d[n].Add(i);
     else d.Add(n, new List<int>() {i});
 }

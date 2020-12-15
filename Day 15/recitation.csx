@@ -21,7 +21,7 @@ IEnumerable<int> GetNumbers(IEnumerable<int> initNums){
             int nIs = pis.Count;
             int n = pis[nIs - 1] - pis[nIs - 2];
             nums.Add(n);
-            yield return (n);
+            yield return n;
         }
         else if (!numsSeen.ContainsKey(lastNum) || numsSeen[lastNum].Count < 2){
             nums.Add(0);

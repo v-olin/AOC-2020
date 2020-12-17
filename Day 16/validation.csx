@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 string[] input = File.ReadAllLines("tickets.txt");
-var rx = new Regex(@"(\d{1,})([-])(\d{1,})");
-MatchCollection ms = rx.Matches(string.Join("",input));
 var holder = new List<string>();
 var splitInput = new List<string[]>();
 for (int i = 0; i <= input.Length; i++){
@@ -16,10 +14,13 @@ for (int i = 0; i <= input.Length; i++){
     else holder.Add(input[i]);
 }
 
-IEnumerable<(int,int)> ranges = ms.Cast<Match>().Select(m => ParseRange(m.Value));
+var rx = new Regex(@"(\d{1,})([-])(\d{1,})");
+IEnumerable<(int,int)> ranges = rx
+    .Matches(string.Join("",input))
+    .Cast<Match>()
+    .Select(m => ParseRange(m.Value));
 var concatRanges = new List<(int,int)>();
 foreach ((int,int) r in ranges) AddRangeToList(concatRanges, r);
-var t = splitInput[2].Skip(1).Select(s => s.Split(','));
 List<int[]> tickets = splitInput[2]
     .Skip(1)
     .Select(s => s.Split(',')

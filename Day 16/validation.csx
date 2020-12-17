@@ -29,7 +29,6 @@ List<int[]> tickets = splitInput[2]
     .ToList();
 
 var invalidValsInTickets = new List<int>();
-
 AddInvalidValsToList(invalidValsInTickets, ranges, tickets);
 Console.WriteLine($"Part 1: {invalidValsInTickets.Sum()}");
 

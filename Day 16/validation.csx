@@ -51,7 +51,7 @@ void AddInvalidValsToList(List<int> invalidVals, IEnumerable<(int,int)> ranges, 
 
 void AddRangeToList(List<(int, int)> ranges, (int min, int max) r){
     var supers = ranges
-    .FindAll(t => t.RangesOverlap(r));
+    .FindAll(t => t.Overlaps(r));
     if (supers.Count() > 0){
         (int min, int max) super = supers.First();
             super.min = r.min < super.min ? r.min : super.min;
@@ -60,7 +60,7 @@ void AddRangeToList(List<(int, int)> ranges, (int min, int max) r){
     else ranges.Add(r);
 }
 
-static bool RangesOverlap(this (int min, int max) org, (int min, int max) cmp){
+static bool Overlaps(this (int min, int max) org, (int min, int max) cmp){
     if (org.min > cmp.max || org.max < cmp.min) return false;
     else return true;
 }

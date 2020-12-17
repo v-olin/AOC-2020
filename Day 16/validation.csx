@@ -61,7 +61,6 @@ void AddRangeToList(List<(int, int)> ranges, (int min, int max) r){
 }
 
 static bool RangesOverlap(this (int min, int max) org, (int min, int max) cmp){
-    if (org.min > cmp.max) return false;
-    else if (org.max < cmp.min) return false;
+    if (org.min > cmp.max || org.max < cmp.min) return false;
     else return true;
 }
